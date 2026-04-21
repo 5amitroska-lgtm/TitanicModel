@@ -21,4 +21,4 @@ def get_model(model_name:str):
 @model_router.post("/predicts/{model_name}")
 def predict(model_name:str,predict_request: PredictRequst):
     """Predikcia so zvolenym modelom"""
-    model_service.predict(model_name, predict_request)
+    return model_service.predict(model_name, predict_request)
