@@ -1,18 +1,21 @@
-from fastapi import APIRouter
+import pandas as pd
+from fastapi.encoders import jsonable_encoder
+from model_api.entities.predict_request import PredictRequst
+from model_api.entities.predict_response import PredictResponse
+from model_api.repository.model_repository import ModelRepository
 
-model_router = APIRouter()
 
-@model_router.get("/models")
-def get_all_models():
-    """Vypise zoznam vsektych dostupnych modelov k predikcii """
-    return {"models": []}
+class ModelService:
 
-@model_router.get("/models/{model_name")
-def get_model(model_name:str):
-    """Vypise info o konkretnom modele"""
-    return model_name
+    def __init__(self, model_repository:ModelRepository):
+        self.__model_repository = model_repository
 
-@model_router.post("/predicts/{model_name}")
-def predict(model_name:str,data:dict):
-    """Predikcia so zvolenym modelom"""
-    pass
+    def get_model_info(self, model_name):
+        model = self.__model_repository.load_model(model_name)
+        return model
+
+    def predict(self, model_name:str, predict_request: PredictRequst):
+        model = self.__model_repository.load_model(model_name)
+        input_df = pd.DataFrame([jsonable_encoder(predict_request)])
+        result = model.predict(input_df)
+        return PredictResponse(PassengerId=0, Survived=True)
